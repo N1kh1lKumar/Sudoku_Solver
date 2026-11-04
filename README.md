@@ -2,6 +2,17 @@
 
 A C++ console-based application that solves Sudoku puzzles using the Backtracking Algorithm. The program validates Sudoku rules and automatically finds a valid solution while displaying solving statistics and execution time.
 
+## Browser frontend
+
+The repository also includes a zero-dependency browser interface for entering and solving puzzles:
+
+- Open `index.html` in a browser.
+- Enter values from 1 to 9 and leave empty cells blank.
+- Select **Validate and solve** to reject duplicate or invalid entries before solving.
+- A valid but unsolvable puzzle receives a separate message from an invalid puzzle.
+
+The frontend uses the same backtracking approach as the C++ application and keeps the original entries unchanged when no solution exists.
+
 ---
 
 ##  Features
