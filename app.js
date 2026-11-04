@@ -174,9 +174,32 @@
         input.dataset.col = col;
         input.setAttribute("aria-label", "Row " + (row + 1) + ", column " + (col + 1));
         input.setAttribute("role", "gridcell");
+        input.setAttribute("aria-keyshortcuts", "ArrowUp ArrowDown ArrowLeft ArrowRight");
         input.addEventListener("input", function () {
           input.value = input.value.replace(/[^1-9]/g, "").slice(0, 1);
           input.classList.remove("is-invalid");
+        });
+        input.addEventListener("keydown", function (event) {
+          const directions = {
+            ArrowUp: [-1, 0],
+            ArrowDown: [1, 0],
+            ArrowLeft: [0, -1],
+            ArrowRight: [0, 1]
+          };
+          const direction = directions[event.key];
+          if (!direction) {
+            return;
+          }
+
+          event.preventDefault();
+          const nextRow = Math.max(0, Math.min(8, row + direction[0]));
+          const nextCol = Math.max(0, Math.min(8, col + direction[1]));
+          const nextCell = container.querySelector(
+            '[data-row="' + nextRow + '"][data-col="' + nextCol + '"]'
+          );
+          if (nextCell) {
+            nextCell.focus();
+          }
         });
         container.appendChild(input);
       }

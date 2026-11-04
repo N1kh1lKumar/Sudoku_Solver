@@ -19,24 +19,29 @@
 body {
   min-width: 320px;
   margin: 0;
+  min-height: 100svh;
+  overflow: hidden;
   background: radial-gradient(circle at top, #172644 0, var(--background) 48rem);
   color: var(--text);
   font-family: Inter, ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
 }
 
 .app-shell {
+  display: flex;
+  flex-direction: column;
+  min-height: 100svh;
   width: min(100% - 2rem, 760px);
   margin: 0 auto;
-  padding: 3.5rem 0;
+  padding: clamp(.75rem, 2.5svh, 2rem) 0;
 }
 
 .hero {
-  margin-bottom: 2rem;
+  margin-bottom: clamp(.75rem, 2svh, 1.5rem);
   text-align: center;
 }
 
 .eyebrow {
-  margin: 0 0 .75rem;
+  margin: 0 0 .4rem;
   color: var(--accent);
   font-size: .8rem;
   font-weight: 700;
@@ -49,8 +54,8 @@ h1, h2, p {
 }
 
 h1 {
-  margin-bottom: .75rem;
-  font-size: clamp(2.2rem, 8vw, 4rem);
+  margin-bottom: .4rem;
+  font-size: clamp(2rem, 6vw, 3.5rem);
   line-height: 1;
 }
 
@@ -74,7 +79,7 @@ h2 {
 }
 
 .solver-card {
-  padding: clamp(1rem, 4vw, 2rem);
+  padding: clamp(.75rem, 2.5vw, 1.5rem);
 }
 
 .section-heading {
@@ -82,7 +87,7 @@ h2 {
   align-items: flex-start;
   justify-content: space-between;
   gap: 1rem;
-  margin-bottom: 1.5rem;
+  margin-bottom: clamp(.75rem, 2svh, 1.25rem);
 }
 
 .section-heading p {
@@ -93,7 +98,9 @@ h2 {
 .sudoku-grid {
   display: grid;
   grid-template-columns: repeat(9, 1fr);
-  width: min(100%, 540px);
+  grid-template-rows: repeat(9, 1fr);
+  width: min(100%, 54svh, 540px);
+  aspect-ratio: 1;
   margin: 0 auto;
   border: 3px solid var(--accent);
   background: var(--border);
@@ -101,8 +108,10 @@ h2 {
 }
 
 .cell {
+  min-width: 0;
+  min-height: 0;
   width: 100%;
-  aspect-ratio: 1;
+  height: 100%;
   border: 0;
   border-right: 1px solid var(--border);
   border-bottom: 1px solid var(--border);
@@ -112,7 +121,9 @@ h2 {
   font: inherit;
   font-size: clamp(1rem, 4vw, 1.6rem);
   font-weight: 700;
+  line-height: 1;
   outline: 0;
+  padding: 0;
   text-align: center;
 }
 
@@ -139,7 +150,7 @@ h2 {
   flex-wrap: wrap;
   justify-content: center;
   gap: .75rem;
-  margin-top: 1.5rem;
+  margin-top: clamp(.75rem, 2svh, 1.25rem);
 }
 
 .button {
@@ -148,7 +159,7 @@ h2 {
   cursor: pointer;
   font: inherit;
   font-weight: 700;
-  padding: .75rem 1rem;
+  padding: .6rem .9rem;
   transition: transform .15s ease, background .15s ease;
 }
 
@@ -177,7 +188,7 @@ h2 {
 }
 
 .status {
-  margin-top: 1.25rem;
+  margin-top: .75rem;
   border-radius: .75rem;
   padding: .9rem 1rem;
   font-weight: 600;
@@ -195,8 +206,8 @@ h2 {
 }
 
 .tips {
-  margin-top: 1rem;
-  padding: 1.25rem 1.5rem;
+  margin-top: .75rem;
+  padding: .75rem 1rem;
 }
 
 .tip-list {
@@ -209,7 +220,7 @@ h2 {
 }
 
 .site-footer {
-  padding: 1.5rem 0 0;
+  padding: .75rem 0 0;
   color: var(--muted);
   font-size: .9rem;
   text-align: center;
@@ -230,7 +241,7 @@ h2 {
 
 @media (max-width: 480px) {
   .app-shell {
-    padding: 2rem 0;
+    width: min(100% - 1rem, 760px);
   }
 
   .section-heading {
@@ -239,5 +250,34 @@ h2 {
 
   .section-heading .button {
     align-self: flex-end;
+  }
+}
+
+@media (max-height: 700px) {
+  .hero {
+    margin-bottom: .5rem;
+  }
+
+  .hero p:last-child,
+  .tips {
+    display: none;
+  }
+
+  .site-footer {
+    padding-top: .5rem;
+  }
+}
+
+@media (max-height: 760px) {
+  .app-shell {
+    padding: .5rem 0;
+  }
+
+  .sudoku-grid {
+    width: min(100%, 40svh, 540px);
+  }
+
+  .tips {
+    display: none;
   }
 }
