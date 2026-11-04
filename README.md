@@ -82,7 +82,6 @@ em++ src/SudokuSolver.cpp src/web_bindings.cpp \
   -s EXPORT_ES6=1 \
   -s ENVIRONMENT=web \
   -s EXPORTED_FUNCTIONS='["_solve_sudoku","_malloc","_free"]' \
-  -s EXPORTED_RUNTIME_METHODS='["ccall"]' \
   -o solver.js
 ```
 

@@ -77,11 +77,7 @@ async function solveWithCpp(module, grid) {
   const steps = module._malloc(4);
   try {
     module.HEAP32.set(grid.flat(), input >> 2);
-    const solved = module.ccall("solve_sudoku", "number", ["number", "number", "number"], [
-      input,
-      output,
-      steps
-    ]);
+    const solved = module._solve_sudoku(input, output, steps);
     if (!solved) return null;
 
     return {
@@ -125,7 +121,15 @@ function setup(module) {
 
     solveButton.disabled = true;
     setStatus("Solving with the C++ engine...", "success");
-    const result = await solveWithCpp(module, grid);
+    let result;
+    try {
+      result = await solveWithCpp(module, grid);
+    } catch (error) {
+      console.error(error);
+      setStatus("The C++ solver failed to process this puzzle. Please refresh and try again.", "error");
+      solveButton.disabled = false;
+      return;
+    }
     solveButton.disabled = false;
 
     if (result === null) {
