@@ -160,6 +160,12 @@
       for (let col = 0; col < 9; col += 1) {
         const input = document.createElement("input");
         input.className = "cell";
+        if (col === 2 || col === 5) {
+          input.classList.add("box-right");
+        }
+        if (row === 2 || row === 5) {
+          input.classList.add("box-bottom");
+        }
         input.type = "text";
         input.inputMode = "numeric";
         input.maxLength = 1;
