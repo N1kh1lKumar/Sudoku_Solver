@@ -1,8 +1,8 @@
 # Sudoku Solver
 
-Sudoku Solver is a dual-interface project that solves standard 9x9 Sudoku puzzles with recursive backtracking and constraint validation.
+Sudoku Solver is a dual-interface project that solves standard 9x9 Sudoku puzzles with recursive backtracking and constraint validation. The browser app calls the same C++ solver compiled to WebAssembly; it does not contain a separate JavaScript solving algorithm.
 
-- **Browser app:** Enter a puzzle in an interactive grid, validate it, and solve it in your browser.
+- **Browser app:** Enter a puzzle in an interactive grid, validate it, and solve it in your browser using the C++ WebAssembly engine.
 - **C++ console app:** Enter a puzzle in the terminal and view the original grid, solved grid, number of attempts, and execution time.
 
 ## Live Demo
@@ -18,12 +18,12 @@ The site is deployed automatically to GitHub Pages whenever changes are pushed t
 - Accepts standard 9x9 Sudoku puzzles.
 - Validates values, rows, columns, and 3x3 subgrids.
 - Solves puzzles with recursive backtracking.
-- Uses the most constrained empty cell first in the browser solver to reduce unnecessary search.
+- Uses the C++ backtracking engine for both the browser and console experiences.
 - Reports invalid puzzles separately from valid but unsolvable puzzles.
 - Preserves the original browser entries when a puzzle has no solution.
 - Displays C++ solving attempts and execution time.
 - Provides a responsive, keyboard-friendly browser interface.
-- Requires no frontend framework, build tool, or runtime dependency.
+- Requires no frontend framework or JavaScript runtime dependency; Emscripten is used to produce the browser WebAssembly build.
 
 ## Project Architecture
 
@@ -43,10 +43,12 @@ The project has a shared algorithmic goal but two independent implementations:
 The browser version is split into:
 
 - `index.html` - page structure, controls, and accessibility labels.
-- `app.js` - grid rendering, input validation, candidate selection, solving, and status messages.
+- `app.js` - grid rendering, input handling, and calls into the compiled C++ solver.
 - `styles.css` - responsive layout, Sudoku grid styling, states, and controls.
+- `src/web_bindings.cpp` - exposes the C++ solver to WebAssembly.
+- `solver.js` and `solver.wasm` - generated browser artifacts created during deployment.
 
-The browser solver clones the input grid before solving, so failed attempts do not overwrite the user’s original entries.
+The browser sends the 81-cell grid to the C++ WebAssembly module and renders the result returned by `solve_sudoku`. The solving rules and backtracking implementation therefore come from `src/SudokuSolver.cpp`.
 
 ## Repository Structure
 
@@ -59,7 +61,8 @@ Sudoku_Solver/
 │   └── SudokuSolver.h         # C++ solver interface
 ├── src/
 │   ├── main.cpp               # C++ console entry point
-│   └── SudokuSolver.cpp       # C++ validation and backtracking logic
+│   ├── SudokuSolver.cpp       # C++ validation and backtracking logic
+│   └── web_bindings.cpp       # WebAssembly bridge for the browser
 ├── screenshots/
 │   └── test.png               # Project screenshot
 ├── app.js                     # Browser solver logic
@@ -71,13 +74,26 @@ Sudoku_Solver/
 
 ## Run the Browser App Locally
 
-Because the browser app has no dependencies, open `index.html` directly in a browser:
+The browser app loads generated WebAssembly artifacts, so build them first with Emscripten:
 
 ```bash
-xdg-open index.html
+em++ src/SudokuSolver.cpp src/web_bindings.cpp \
+  -Iinclude -O3 \
+  -s MODULARIZE=1 \
+  -s EXPORT_ES6=1 \
+  -s ENVIRONMENT=web \
+  -s EXPORTED_FUNCTIONS='["_solve_sudoku","_malloc","_free"]' \
+  -s EXPORTED_RUNTIME_METHODS='["ccall"]' \
+  -o solver.js
 ```
 
-Alternatively, serve the repository with any static file server and open the displayed local URL.
+Then serve the repository with a local static server:
+
+```bash
+python3 -m http.server
+```
+
+Open the displayed local URL. Opening `index.html` directly with `file://` is not supported because browsers restrict module and WebAssembly loading from local files.
 
 ### Browser usage
 
@@ -96,7 +112,7 @@ Alternatively, serve the repository with any static file server and open the dis
 ### Compile
 
 ```bash
-g++ -std=c++11 src/*.cpp -Iinclude -o sudoku
+g++ -std=c++11 src/main.cpp src/SudokuSolver.cpp -Iinclude -o sudoku
 ```
 
 ### Run
@@ -142,7 +158,7 @@ For each empty cell, the solver tries candidate values from `1` to `9`, checks t
 
 ## Deployment
 
-The workflow in `.github/workflows/pages.yml` uploads the repository root as a GitHub Pages artifact and deploys it whenever `main` changes. The workflow can also be started manually with GitHub Actions.
+The workflow in `.github/workflows/pages.yml` installs Emscripten, compiles `src/SudokuSolver.cpp` and `src/web_bindings.cpp` into `solver.js` and `solver.wasm`, then uploads the repository root as a GitHub Pages artifact. It deploys whenever `main` changes and can also be started manually with GitHub Actions.
 
 ## Technologies
 
@@ -154,6 +170,7 @@ The workflow in `.github/workflows/pages.yml` uploads the repository root as a G
 - Constraint validation
 - GitHub Actions
 - GitHub Pages
+- WebAssembly via Emscripten
 
 ## Author
 
