@@ -40,6 +40,25 @@ body {
   text-align: center;
 }
 
+.creator-bar {
+  display: flex;
+  justify-content: flex-end;
+  gap: .75rem;
+  margin-bottom: clamp(.75rem, 2svh, 1.25rem);
+  color: var(--muted);
+  font-size: .78rem;
+}
+
+.creator-bar a {
+  color: var(--accent);
+  font-weight: 700;
+  text-decoration: none;
+}
+
+.creator-bar a:hover {
+  color: var(--text);
+}
+
 .eyebrow {
   margin: 0 0 .4rem;
   color: var(--accent);
@@ -219,26 +238,6 @@ h2 {
   margin-bottom: 0;
 }
 
-.site-footer {
-  padding: .75rem 0 0;
-  color: var(--muted);
-  font-size: .9rem;
-  text-align: center;
-}
-
-.site-footer p {
-  margin-bottom: .35rem;
-}
-
-.site-footer a {
-  color: var(--accent);
-  font-weight: 700;
-}
-
-.site-footer a:hover {
-  color: var(--text);
-}
-
 @media (max-width: 480px) {
   .app-shell {
     width: min(100% - 1rem, 760px);
@@ -250,6 +249,10 @@ h2 {
 
   .section-heading .button {
     align-self: flex-end;
+  }
+
+  .creator-bar {
+    justify-content: center;
   }
 }
 
@@ -263,9 +266,6 @@ h2 {
     display: none;
   }
 
-  .site-footer {
-    padding-top: .5rem;
-  }
 }
 
 @media (max-height: 760px) {
@@ -279,5 +279,11 @@ h2 {
 
   .tips {
     display: none;
+  }
+}
+
+@media (min-height: 761px) {
+  .sudoku-grid {
+    width: min(100%, 46svh, 540px);
   }
 }
