@@ -4,6 +4,15 @@
 
 using namespace std;
 
+SudokuSolver::SudokuSolver()
+{
+    for(int row = 0; row < 9; row++)
+    {
+        for(int col = 0; col < 9; col++)
+            grid[row][col] = 0;
+    }
+}
+
 // Input Sudoku Grid
 void SudokuSolver::inputGrid()
 {
@@ -16,6 +25,62 @@ void SudokuSolver::inputGrid()
             cin >> grid[i][j];
         }
     }
+}
+
+void SudokuSolver::setGrid(const int values[9][9])
+{
+    for(int row = 0; row < 9; row++)
+    {
+        for(int col = 0; col < 9; col++)
+            grid[row][col] = values[row][col];
+    }
+    steps = 0;
+}
+
+void SudokuSolver::getGrid(int values[9][9]) const
+{
+    for(int row = 0; row < 9; row++)
+    {
+        for(int col = 0; col < 9; col++)
+            values[row][col] = grid[row][col];
+    }
+}
+
+bool SudokuSolver::isValidGrid() const
+{
+    for(int row = 0; row < 9; row++)
+    {
+        for(int col = 0; col < 9; col++)
+        {
+            int value = grid[row][col];
+            if(value < 0 || value > 9)
+                return false;
+
+            if(value == 0)
+                continue;
+
+            for(int index = 0; index < 9; index++)
+            {
+                if(index != col && grid[row][index] == value)
+                    return false;
+                if(index != row && grid[index][col] == value)
+                    return false;
+            }
+
+            int startRow = row - row % 3;
+            int startCol = col - col % 3;
+            for(int boxRow = startRow; boxRow < startRow + 3; boxRow++)
+            {
+                for(int boxCol = startCol; boxCol < startCol + 3; boxCol++)
+                {
+                    if((boxRow != row || boxCol != col) &&
+                       grid[boxRow][boxCol] == value)
+                        return false;
+                }
+            }
+        }
+    }
+    return true;
 }
 
 // Display Sudoku Grid
@@ -81,8 +146,7 @@ bool SudokuSolver::isSafe(int row, int col, int num)
 }
 
 
-// Solve Sudoku using Backtracking
-bool SudokuSolver::solveSudoku()
+bool SudokuSolver::solveRecursive()
 {
     for(int row = 0; row < 9; row++)
     {
@@ -97,7 +161,7 @@ bool SudokuSolver::solveSudoku()
                     {
                         grid[row][col] = num;
 
-                        if(solveSudoku())
+                        if(solveRecursive())
                             return true;
 
                         // Backtrack
@@ -113,6 +177,19 @@ bool SudokuSolver::solveSudoku()
     return true;
 }
 
+// Solve Sudoku using Backtracking
+bool SudokuSolver::solveSudoku()
+{
+    steps = 0;
+    if(!isValidGrid())
+        return false;
+    return solveRecursive();
+}
+
+int SudokuSolver::getSteps() const
+{
+    return steps;
+}
 
 
 // Display total steps taken to solve the Sudoku

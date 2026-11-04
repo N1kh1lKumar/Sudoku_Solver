@@ -25,6 +25,22 @@ jobs:
       - name: Checkout
         uses: actions/checkout@v4
 
+      - name: Set up Emscripten
+        uses: mymindstorm/setup-emsdk@v14
+        with:
+          version: 4.0.15
+
+      - name: Build C++ web solver
+        run: |
+          em++ src/SudokuSolver.cpp src/web_bindings.cpp \
+            -Iinclude -O3 \
+            -s MODULARIZE=1 \
+            -s EXPORT_ES6=1 \
+            -s ENVIRONMENT=web \
+            -s EXPORTED_FUNCTIONS='["_solve_sudoku","_malloc","_free"]' \
+            -s EXPORTED_RUNTIME_METHODS='["ccall"]' \
+            -o solver.js
+
       - name: Configure Pages
         uses: actions/configure-pages@v5
         with:
