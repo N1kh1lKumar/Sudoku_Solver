@@ -1,0 +1,48 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="description" content="A browser-based Sudoku solver with validation and clear feedback.">
+  <title>Sudoku Solver</title>
+  <link rel="stylesheet" href="styles.css">
+  <script src="app.js" defer></script>
+</head>
+<body>
+  <main class="app-shell">
+    <header class="hero">
+      <p class="eyebrow">Backtracking playground</p>
+      <h1>Sudoku Solver</h1>
+      <p>Enter a puzzle, validate it, and solve it in your browser.</p>
+    </header>
+
+    <section class="solver-card" aria-labelledby="puzzle-title">
+      <div class="section-heading">
+        <div>
+          <h2 id="puzzle-title">Your puzzle</h2>
+          <p>Use numbers from 1 to 9. Leave empty cells blank or enter 0.</p>
+        </div>
+        <button id="clear-button" class="button button-secondary" type="button">Clear</button>
+      </div>
+
+      <div id="sudoku-grid" class="sudoku-grid" role="grid" aria-label="Sudoku puzzle input"></div>
+
+      <div class="actions">
+        <button id="solve-button" class="button button-primary" type="button">Validate and solve</button>
+        <button id="sample-button" class="button button-secondary" type="button">Load sample</button>
+      </div>
+
+      <div id="status" class="status" role="status" aria-live="polite" hidden></div>
+    </section>
+
+    <section class="tips" aria-labelledby="tips-title">
+      <h2 id="tips-title">How it works</h2>
+      <div class="tip-list">
+        <p><strong>1.</strong> The board is checked for invalid values and duplicate numbers.</p>
+        <p><strong>2.</strong> A valid board is solved with a backtracking algorithm.</p>
+        <p><strong>3.</strong> If no solution exists, the original entries stay unchanged.</p>
+      </div>
+    </section>
+  </main>
+</body>
+</html>
