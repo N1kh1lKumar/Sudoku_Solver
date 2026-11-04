@@ -23,11 +23,11 @@ The site is deployed automatically to GitHub Pages whenever changes are pushed t
 - Preserves the original browser entries when a puzzle has no solution.
 - Displays C++ solving attempts and execution time.
 - Provides a responsive, keyboard-friendly browser interface.
-- Requires no frontend framework or JavaScript runtime dependency; Emscripten is used to produce the browser WebAssembly build.
+- Requires no frontend framework or runtime dependency in the application; Emscripten is used only during deployment to produce the browser WebAssembly build.
 
 ## Project Architecture
 
-The project has a shared algorithmic goal but two independent implementations:
+The project uses one C++ solving engine for both interfaces. The console app links to it natively, while the browser app uses the same code compiled to WebAssembly.
 
 ### C++ console application
 
@@ -43,12 +43,11 @@ The project has a shared algorithmic goal but two independent implementations:
 The browser version is split into:
 
 - `index.html` - page structure, controls, and accessibility labels.
-- `app.js` - grid rendering, input handling, and calls into the compiled C++ solver.
+- `app.js` - grid rendering, input handling, and the WebAssembly bridge.
 - `styles.css` - responsive layout, Sudoku grid styling, states, and controls.
-- `src/web_bindings.cpp` - exposes the C++ solver to WebAssembly.
-- `solver.js` and `solver.wasm` - generated browser artifacts created during deployment.
+- `src/web_bindings.cpp` - exposes the C++ solver through the `solve_sudoku` WebAssembly function.
 
-The browser sends the 81-cell grid to the C++ WebAssembly module and renders the result returned by `solve_sudoku`. The solving rules and backtracking implementation therefore come from `src/SudokuSolver.cpp`.
+During deployment, Emscripten generates `solver.js` and `solver.wasm`. The browser sends the 81-cell grid to that module and renders the result returned by `solve_sudoku`; all solving and validation rules come from `src/SudokuSolver.cpp`.
 
 ## Repository Structure
 
@@ -93,12 +92,12 @@ Then serve the repository with a local static server:
 python3 -m http.server
 ```
 
-Open the displayed local URL. Opening `index.html` directly with `file://` is not supported because browsers restrict module and WebAssembly loading from local files.
+Open the displayed local URL. Opening `index.html` directly with `file://` is not supported because browsers restrict ES modules and WebAssembly loading from local files.
 
 ### Browser usage
 
 1. Enter numbers from `1` to `9`; leave empty cells blank.
-2. Select **Validate and solve**.
+2. Select **Validate and solve** to send the puzzle to the C++ WebAssembly solver.
 3. Use **Load sample** to load the included example puzzle.
 4. Use **Clear** to reset the board.
 
